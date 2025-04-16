@@ -13,6 +13,39 @@
     await OneSignal.init({
       appId: "47b3450d-b2b9-467d-b8b5-a60887297080",
     });
+
+    // Function to get and store the player ID
+    const storePlayerId = () => {
+      const subscription = OneSignal.User.PushSubscription;
+      if (subscription && subscription.id) {
+        console.log("OneSignal Player ID captured:", subscription.id);
+        // Store it on the window object
+        window.myAppOneSignalPlayerId = subscription.id;
+        // Optional: Dispatch a custom event if needed for more complex scenarios
+        // window.dispatchEvent(new CustomEvent('oneSignalPlayerIdReady', { detail: subscription.id }));
+      } else {
+         console.log("Push subscription or ID not available yet.");
+         // Could add a small retry mechanism if needed, but the event listener is better
+      }
+    };
+
+    // Attempt to get it immediately
+    storePlayerId();
+
+    // Listen for changes (important for when the user subscribes later)
+    OneSignal.User.PushSubscription.addEventListener("change", (event) => {
+      console.log("Push subscription changed:", event.current);
+      if (event.current.id) {
+         window.myAppOneSignalPlayerId = event.current.id;
+         console.log("OneSignal Player ID updated:", event.current.id);
+         // Optional: Dispatch event again if needed
+         // window.dispatchEvent(new CustomEvent('oneSignalPlayerIdReady', { detail: event.current.id }));
+      } else {
+         window.myAppOneSignalPlayerId = undefined; // Clear if unsubscribed
+         console.log("User unsubscribed or Player ID became unavailable.");
+      }
+    });
+    // --- End added part ---
   });
 </script>
   </head>

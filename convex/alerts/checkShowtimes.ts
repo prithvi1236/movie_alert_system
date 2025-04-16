@@ -14,7 +14,7 @@ export const checkShowtimes = internalAction({
       try {
         const today = new Date().toISOString().split('T')[0];
         const showtimes = await ctx.runAction(api.movieglu.getMovieShowtimes, {
-          cinemaId: alert.cinemaId,
+          cinemaId: String(alert.cinemaId),
           date: today,
         });
 
@@ -33,7 +33,7 @@ export const checkShowtimes = internalAction({
               app_id: process.env.ONESIGNAL_APP_ID,
               include_player_ids: [alert.oneSignalPlayerId],
               contents: {
-                en: `New showtime available for ${alert.movieTitle} at ${alert.theaterName}!`,
+                en: `New showtime available for ${alert.movieTitle} at ${alert.cinemaName}!`,
               },
               headings: {
                 en: 'New Showtime Alert',

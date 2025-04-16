@@ -5,25 +5,21 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const createAlert = mutation({
   args: {
     movieId: v.string(),
-    theaterId: v.id("theaters"),
+    cinemaId: v.string(), // Expect the MovieGlu cinema ID string
     movieTitle: v.string(),
-    theaterName: v.string(),
+    cinemaName: v.string(),
     oneSignalPlayerId: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
 
-    const theater = await ctx.db.get(args.theaterId);
-    if (!theater) throw new Error("Theater not found");
-
     return await ctx.db.insert("userAlerts", {
       userId,
-      movieId: args.movieId,
-      theaterId: args.theaterId,
-      cinemaId: theater.cinemaId,
+      movieId: String(args.movieId),
+      cinemaId: String(args.cinemaId),
       movieTitle: args.movieTitle,
-      theaterName: args.theaterName,
+      cinemaName: args.cinemaName,
       oneSignalPlayerId: args.oneSignalPlayerId,
     });
   },
@@ -35,9 +31,12 @@ export const getUserAlerts = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) return [];
 
+    // Consider adding an index on userId for performance if the table grows
+    // .withIndex("by_userId", (q) => q.eq("userId", userId))
     return await ctx.db
       .query("userAlerts")
       .filter((q) => q.eq(q.field("userId"), userId))
+      .order("desc") // Optional: show newest alerts first
       .collect();
   },
 });
@@ -51,6 +50,7 @@ export const deleteAlert = mutation({
     if (!userId) throw new Error("Not authenticated");
 
     const alert = await ctx.db.get(args.alertId);
+    // Security check: Ensure the user owns the alert they are trying to delete
     if (!alert || alert.userId !== userId) {
       throw new Error("Alert not found or unauthorized");
     }
@@ -62,6 +62,8 @@ export const deleteAlert = mutation({
 export const getAllAlerts = internalQuery({
   args: {},
   handler: async (ctx) => {
+    // This fetches all alerts for the cron job. Ensure this is intended.
+    // If the table grows very large, consider optimizing or paginating.
     return await ctx.db.query("userAlerts").collect();
   },
 });
