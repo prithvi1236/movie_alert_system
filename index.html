@@ -12,6 +12,7 @@
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "47b3450d-b2b9-467d-b8b5-a60887297080",
+      ServiceWorkerPath: "public/OneSignal/push/OneSignalSDKWorker.js",
     });
 
     // Function to get and store the player ID
