@@ -254,12 +254,12 @@ export function MovieAlerts() {
   // Format showtimes for display
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Set Up Movie Alerts</h2>
+    <div className="max-w-2xl mx-auto p-4 transition-all duration-300 ease-in-out">
+      <div className="bg-white shadow-xl rounded-xl p-8 mb-8 hover:shadow-2xl transition-shadow duration-300">
+        <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Set Up Movie Alerts</h2>
         <div className="space-y-6">
-          <div className="space-y-2">
-            <label htmlFor="city-input" className="block text-sm font-medium text-gray-700">
+          <div className="space-y-2 group">
+            <label htmlFor="city-input" className="block text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">
               City Name
             </label>
             <input
@@ -268,13 +268,13 @@ export function MovieAlerts() {
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="Enter city name (e.g., London)"
-              className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-blue-300"
               aria-describedby="city-help"
             />
-            <p id="city-help" className="text-xs text-gray-500">Enter a city to find nearby theaters.</p>
+            <p id="city-help" className="text-xs text-gray-500 group-hover:text-gray-700 transition-colors">Enter a city to find nearby theaters.</p>
           </div>
-          <div className="space-y-2">
-            <label htmlFor="date-picker" className="block text-sm font-medium text-gray-700">
+          <div className="space-y-2 group">
+            <label htmlFor="date-picker" className="block text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">
               Select Date
             </label>
             <DatePicker
@@ -283,39 +283,45 @@ export function MovieAlerts() {
               onChange={(date: Date | null) => setSelectedDate(date)}
               minDate={new Date()}
               dateFormat="yyyy-MM-dd"
-              className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-blue-300"
               placeholderText="Select a date"
               aria-describedby="date-help"
             />
-            <p id="date-help" className="text-xs text-gray-500">Choose a date to view showtimes.</p>
+            <p id="date-help" className="text-xs text-gray-500 group-hover:text-gray-700 transition-colors">Choose a date to view showtimes.</p>
           </div>
           <div>
             <button
               onClick={handleFindTheaters}
               disabled={isLoadingTheaters || !city.trim()}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 font-medium shadow-md"
             >
-              {isLoadingTheaters ? "Searching..." : "Find Theaters"}
+              {isLoadingTheaters ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Searching...
+                </span>
+              ) : "Find Theaters"}
             </button>
           </div>
-          <div className="space-y-2">
-            <label htmlFor="theater-select" className="block text-sm font-medium text-gray-700">
+          <div className="space-y-2 group">
+            <label htmlFor="theater-select" className="block text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">
               Select Theater
             </label>
-            <Select<Theater> // Explicitly type Select if needed
+            <Select<Theater>
               inputId="theater-select"
               value={selectedTheater}
               onChange={(theater) => {
                 console.log("Theater selected:", theater);
                 setSelectedTheater(theater);
               }}
-              options={Theaters} 
-              // --- Add getOptionLabel ---
+              options={Theaters}
               getOptionLabel={(theater: Theater) =>
                 `${theater.name} (${theater.address})`
               }
               getOptionValue={(theater: Theater) => theater.cinemaId}
-              // --- End modifications ---
               placeholder={isLoadingTheaters ? "Loading theaters..." : "Choose a theater..."}
               className="basic-single"
               classNamePrefix="select"
@@ -324,7 +330,27 @@ export function MovieAlerts() {
               noOptionsMessage={() =>
                 isLoadingTheaters ? "Loading..." : city ? "No theaters found" : "Enter a city first"
               }
-              aria-label="Select Theater" // Added aria-label
+              aria-label="Select Theater"
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  padding: '4px',
+                  borderRadius: '0.5rem',
+                  borderWidth: '2px',
+                  '&:hover': {
+                    borderColor: '#93C5FD'
+                  }
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isSelected ? '#2563EB' : state.isFocused ? '#BFDBFE' : 'white',
+                  color: state.isSelected ? 'white' : '#1F2937',
+                  ':active': {
+                    backgroundColor: '#2563EB',
+                    color: 'white'
+                  }
+                })
+              }}
             />
           </div>
 
@@ -352,22 +378,29 @@ export function MovieAlerts() {
             {selectedMovie && (
             <>
               {selectedMovie.showtimes.length > 0 ? (
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Available Showtimes</label>
-                  <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
-                    {/* Call the helper function to render the times */}
-                      {renderShowtimes(selectedMovie.showtimes)}
+                <div className="space-y-2 animate-fadeIn">
+                  <label className="block text-sm font-semibold text-gray-700">Available Showtimes</label>
+                  <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200 shadow-inner">
+                    {renderShowtimes(selectedMovie.showtimes)}
                   </div>
                 </div>
-              ) :selectedMovie ? (
+              ) : selectedMovie ? (
                 <button
                   onClick={handleCreateAlert}
                   disabled={!selectedMovie || !selectedTheater || !oneSignalPlayerId || isSubmittingAlert}
-                  className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-6 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 font-medium shadow-md"
                 >
-                  {isSubmittingAlert ? "Creating Alert..." : "Set Up Alert"}
+                  {isSubmittingAlert ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creating Alert...
+                    </span>
+                  ) : "Set Up Alert"}
                 </button>
-              ):null}
+              ) : null}
             </>
           )}
 
