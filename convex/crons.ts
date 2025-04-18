@@ -6,7 +6,7 @@ const crons = cronJobs();
 // Check for new showtimes every hour
 crons.interval(
   "check-new-showtimes",
-  { minutes: 60 },
+  { minutes: 1 },
   internal.alerts.checkShowtimes.checkShowtimes,
   {}
 );

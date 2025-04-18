@@ -256,7 +256,7 @@ export function MovieAlerts() {
   return (
     <div className="max-w-2xl mx-auto p-4 transition-all duration-300 ease-in-out">
       <div className="bg-white shadow-xl rounded-xl p-8 mb-8 hover:shadow-2xl transition-shadow duration-300">
-        <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Set Up Movie Alerts</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Check Movie Show Availability</h2>
         <div className="space-y-6">
           <div className="space-y-2 group">
             <label htmlFor="city-input" className="block text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">

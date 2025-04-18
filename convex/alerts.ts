@@ -46,12 +46,23 @@ export const deleteAlert = mutation({
     alertId: v.id("userAlerts"),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    // Check if a user identity exists. If not, assume it's an internal call.
+    const identity = await ctx.auth.getUserIdentity();
+    const isUserCall = identity !== null;
+    let userId = null;
+
+    if (isUserCall) {
+      // If it's a user call, get the user ID.
+      // getAuthUserId ensures we throw if not authenticated.
+      userId = await getAuthUserId(ctx);
+    } // No need for an else block; internal calls don't need userId for this check.
 
     const alert = await ctx.db.get(args.alertId);
-    // Security check: Ensure the user owns the alert they are trying to delete
-    if (!alert || alert.userId !== userId) {
+
+    // Security check:
+    // 1. Alert must exist.
+    // 2. If it's a user call, the user must own the alert.
+    if (!alert || (isUserCall && alert.userId !== userId)) {
       throw new Error("Alert not found or unauthorized");
     }
 
